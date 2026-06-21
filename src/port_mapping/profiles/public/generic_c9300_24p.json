@@ -1,0 +1,22 @@
+{
+  "profile_name": "generic_c9300_24p",
+  "description": "Generic 24-port Catalyst 9200/9300 access switch refresh template. Assumes copper access ports retain numbering and uplinks move to module ports.",
+  "source_models": ["generic-24-port-catalyst"],
+  "target_models": ["C9200-24", "C9300-24"],
+  "fallback": "same_name",
+  "access_port_rules": [
+    {
+      "source_range": "Gi1/0/1-24",
+      "target_range": "Gi1/0/1-24",
+      "role": "access"
+    }
+  ],
+  "uplink_rules": [
+    {
+      "source_ports": ["Gi1/0/25", "Gi1/0/26", "Gi1/0/27", "Gi1/0/28"],
+      "target_ports": ["Te1/1/1", "Te1/1/2", "Te1/1/3", "Te1/1/4"],
+      "role": "uplink",
+      "requires_operator_review": true
+    }
+  ]
+}

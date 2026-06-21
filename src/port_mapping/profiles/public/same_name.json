@@ -1,0 +1,7 @@
+{
+  "profile_name": "same_name",
+  "description": "Conservative fallback profile. Interfaces map to the same normalized name when no explicit rule is selected.",
+  "fallback": "same_name",
+  "access_port_rules": [],
+  "uplink_rules": []
+}

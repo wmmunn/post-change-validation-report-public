@@ -1,0 +1,22 @@
+{
+  "profile_name": "generic_c9300_mgig",
+  "description": "Generic Catalyst mGig access switch profile. Assumes legacy gigabit access ports map to mGig target prefixes while retaining stack member and port numbering.",
+  "source_models": ["generic-catalyst-gigabit-access"],
+  "target_models": ["C9300-24UX", "C9300-48UN", "C9300-48UXM"],
+  "fallback": "same_name",
+  "access_port_rules": [
+    {
+      "source_range": "Gi1/0/1-48",
+      "target_range": "Te1/0/1-48",
+      "role": "access"
+    }
+  ],
+  "uplink_rules": [
+    {
+      "source_ports": ["Gi1/0/49", "Gi1/0/50", "Gi1/0/51", "Gi1/0/52"],
+      "target_ports": ["Te1/1/1", "Te1/1/2", "Te1/1/3", "Te1/1/4"],
+      "role": "uplink",
+      "requires_operator_review": true
+    }
+  ]
+}

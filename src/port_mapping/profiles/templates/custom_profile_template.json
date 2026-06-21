@@ -1,0 +1,20 @@
+{
+  "profile_name": "custom_profile_template",
+  "description": "Operator-editable template. Replace ranges and uplinks with sanitized site-appropriate assumptions.",
+  "fallback": "same_name",
+  "access_port_rules": [
+    {
+      "source_range": "Gi1/0/1-48",
+      "target_range": "Gi1/0/1-48",
+      "role": "access"
+    }
+  ],
+  "uplink_rules": [
+    {
+      "source_ports": ["Gi1/0/49", "Gi1/0/50"],
+      "target_ports": ["Te1/1/1", "Te1/1/2"],
+      "role": "uplink",
+      "requires_operator_review": true
+    }
+  ]
+}

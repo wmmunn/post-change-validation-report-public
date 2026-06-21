@@ -1,0 +1,32 @@
+{
+  "profile_name": "generic_ie3300_standalone",
+  "description": "Generic standalone industrial switch profile for IE/IE3300-style two-part interface numbering.",
+  "source_models": ["generic-industrial-standalone"],
+  "target_models": ["IE3300"],
+  "fallback": "same_name",
+  "access_port_rules": [
+    {
+      "source_range": "Gi1/1-8",
+      "target_range": "Gi1/1-8",
+      "role": "access"
+    },
+    {
+      "source_range": "Fa1/1-8",
+      "target_range": "Gi1/1-8",
+      "role": "access"
+    },
+    {
+      "source_range": "Gi0/1-8",
+      "target_range": "Gi1/1-8",
+      "role": "legacy_access"
+    }
+  ],
+  "uplink_rules": [
+    {
+      "source_ports": ["Gi1/9", "Gi1/10"],
+      "target_ports": ["Gi1/9", "Gi1/10"],
+      "role": "uplink",
+      "requires_operator_review": true
+    }
+  ]
+}

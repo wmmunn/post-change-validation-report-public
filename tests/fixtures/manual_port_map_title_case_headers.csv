@@ -1,0 +1,4 @@
+Old Port,New Port,Role,Note
+Gi1/0/25,Te1/1/1,uplink,synthetic router-0 uplink A
+Gi2/0/52,Te2/1/8,uplink,synthetic router-1 uplink B
+Gi1/0/3,Te1/0/3,access,synthetic access port

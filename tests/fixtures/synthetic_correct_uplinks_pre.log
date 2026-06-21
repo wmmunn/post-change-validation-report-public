@@ -1,0 +1,42 @@
+ACCESS-SW01#show version
+Cisco IOS XE Software, Version 17.09.04
+
+ACCESS-SW01#show int status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Gi1/0/25  to router-0        connected    trunk      a-full  a-1000 1000BaseLX SFP
+Gi2/0/52  to router-1        connected    trunk      a-full  a-1000 1000BaseLX SFP
+Gi1/0/3   location-21-ap     connected    912        a-full  a-1000 10/100/1000BaseTX
+
+ACCESS-SW01#show cdp neighbors
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+router-0.net.location.com
+                 Gig 1/0/25       120             R S I   C9500     Twe 1/0/22
+router-1.net.location.com
+                 Gig 2/0/52       120             R S I   C9500     Twe 1/0/22
+
+ACCESS-SW01#show interfaces trunk
+Port        Mode             Encapsulation  Status        Native vlan
+Gi1/0/25    on               802.1q         trunking      1
+Gi2/0/52    on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Gi1/0/25    1-4094
+Gi2/0/52    1-4094
+
+ACCESS-SW01#show running-config
+version 17.9
+!
+switch 1 provision c9300-24ux
+switch 2 provision c9300-48u
+!
+interface GigabitEthernet1/0/25
+ description to router-0
+ switchport mode trunk
+!
+interface GigabitEthernet2/0/52
+ description to router-1
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/3
+ description location-21-ap
+ switchport access vlan 912

@@ -1,0 +1,366 @@
+FICSITE01-ACC-SW01#show version
+Cisco IOS XE Software, Version 17.09.04
+Cisco IOS Software [Cupertino], Catalyst L3 Switch Software (CAT9K_IOSXE), Version 17.9.4, RELEASE SOFTWARE (fc5)
+System image file is "bootflash:packages.conf"
+FICSITE01-ACC-SW01 uptime is 2 hours, 15 minutes
+
+FICSITE01-ACC-SW01#show inventory
+NAME: "1", DESCR: "C9300-48U Stack Member"
+PID: C9300-48U          , VID: V02  , SN: FCW0000FICS11
+NAME: "2", DESCR: "C9300-24UX Stack Member"
+PID: C9300-24UX         , VID: V01  , SN: FCW0000FICS12
+
+FICSITE01-ACC-SW01#show running-config
+version 17.9
+!
+switch 1 provision c9300-48u
+switch 2 provision c9300-24ux
+!
+interface GigabitEthernet1/0/1
+ description desk-m1-1
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/2
+ description desk-m1-2
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/3
+ description desk-m1-3
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/4
+ description desk-m1-4
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/5
+ description desk-m1-5
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/6
+ description desk-m1-6
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/7
+ description desk-m1-7
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/8
+ description desk-m1-8
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/9
+ description desk-m1-9
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/10
+ description desk-m1-10
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/11
+ description desk-m1-11
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/12
+ description desk-m1-12
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/13
+ description desk-m1-13
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/14
+ description desk-m1-14
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/15
+ description conf-room-phone
+ switchport access vlan 912
+!
+interface GigabitEthernet1/0/16
+ description desk-m1-16
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/17
+ description desk-m1-17
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/18
+ description spare-workstation
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/19
+ description desk-m1-19
+ switchport access vlan 100
+!
+interface GigabitEthernet1/0/20
+ description desk-m1-20
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/1
+ description desk-m2-1
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/2
+ description desk-m2-2
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/3
+ description desk-m2-3
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/4
+ description desk-m2-4
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/5
+ description desk-m2-5
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/6
+ description desk-m2-6
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/7
+ description desk-m2-7
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/8
+ description desk-m2-8
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/9
+ description desk-m2-9
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/10
+ description desk-m2-10
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/11
+ description desk-m2-11
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/12
+ description desk-m2-12
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/13
+ description desk-m2-13
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/14
+ description desk-m2-14
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/15
+ description desk-m2-15
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/16
+ description desk-m2-16
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/17
+ description desk-m2-17
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/18
+ description desk-m2-18
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/19
+ description desk-m2-19
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/20
+ description desk-m2-20
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/21
+ description desk-m2-21
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/22
+ description desk-m2-22
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/23
+ description desk-m2-23
+ switchport access vlan 100
+!
+interface TenGigabitEthernet2/0/24
+ description desk-m2-24
+ switchport access vlan 100
+!
+interface TenGigabitEthernet1/1/1
+ description to gw-a
+ switchport mode trunk
+!
+interface TenGigabitEthernet2/1/8
+ description to gw-b
+ switchport mode trunk
+!
+
+FICSITE01-ACC-SW01#show int status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Te1/1/1   to gw-a            connected    trunk      a-full  a-1000 1000BaseLX SFP
+Te2/1/8   to gw-b            connected    trunk      a-full  a-1000 1000BaseLX SFP
+Gi1/0/1   desk-m1-1          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/2   desk-m1-2          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/3   desk-m1-3          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/4   desk-m1-4          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/5   desk-m1-5          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/6   desk-m1-6          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/7   desk-m1-7          notconnect   100        auto    auto   10/100/1000BaseTX
+Gi1/0/8   desk-m1-8          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/9   desk-m1-9          connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/10  desk-m1-10         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/11  desk-m1-11         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/12  desk-m1-12         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/13  desk-m1-13         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/14  desk-m1-14         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/15  conf-room-phone    connected    912        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/16  desk-m1-16         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/17  desk-m1-17         connected    100        a-full  a-1000 10/100/1000BaseTX
+Gi1/0/18  spare-workstation  notconnect   100        auto    auto   10/100/1000BaseTX
+Gi1/0/19  desk-m1-19         notconnect   100        auto    auto   10/100/1000BaseTX
+Gi1/0/20  desk-m1-20         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/1   desk-m2-1          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/2   desk-m2-2          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/3   desk-m2-3          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/4   desk-m2-4          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/5   desk-m2-5          notconnect   100        auto    auto   10/100/1000BaseTX
+Te2/0/6   desk-m2-6          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/7   desk-m2-7          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/8   desk-m2-8          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/9   desk-m2-9          connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/10  desk-m2-10         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/11  desk-m2-11         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/12  desk-m2-12         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/13  desk-m2-13         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/14  desk-m2-14         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/15  desk-m2-15         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/16  desk-m2-16         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/17  desk-m2-17         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/18  desk-m2-18         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/19  desk-m2-19         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/20  desk-m2-20         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/21  desk-m2-21         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/22  desk-m2-22         notconnect   100        auto    auto   10/100/1000BaseTX
+Te2/0/23  desk-m2-23         connected    100        a-full  a-1000 10/100/1000BaseTX
+Te2/0/24  desk-m2-24         connected    100        a-full  a-1000 10/100/1000BaseTX
+
+FICSITE01-ACC-SW01#show cdp neighbors
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+gw-a.core.example
+                 Ten 1/1/1        120             R S I   C9500     Twe 1/0/22
+gw-b.core.example
+                 Ten 2/1/8        120             R S I   C9500     Twe 1/0/23
+
+FICSITE01-ACC-SW01#show lldp neighbors
+Local Intf     Hold-time   Capability      Port ID
+Te1/1/1        120         B,R             Twe1/0/22
+Te2/1/8        120         B,R             Twe1/0/23
+
+FICSITE01-ACC-SW01#show interfaces trunk
+Port        Mode             Encapsulation  Status        Native vlan
+Te1/1/1     on               802.1q         trunking      1
+Te2/1/8     on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Te1/1/1     1-4094
+Te2/1/8     1-4094
+
+FICSITE01-ACC-SW01#show spanning-tree root
+VLAN0001 32769 0011.2233.4455 2000 128.1 P2p Root TenGigabitEthernet1/1/1
+VLAN0100 32769 0011.2233.4455 2000 128.1 P2p Root TenGigabitEthernet1/1/1
+
+FICSITE01-ACC-SW01#show spanning-tree summary
+Pathcost method used is long
+
+FICSITE01-ACC-SW01#show mac address-table
+          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+100     aabb.cc00.1ca1    DYNAMIC     Gi1/0/1
+100     aabb.cc00.1cb3    DYNAMIC     Gi1/0/2
+100     aabb.cc00.1cc5    DYNAMIC     Gi1/0/3
+100     aabb.cc00.1cd7    DYNAMIC     Gi1/0/4
+100     aabb.cc00.1ce9    DYNAMIC     Gi1/0/5
+100     aabb.cc00.1cfb    DYNAMIC     Gi1/0/6
+100     aabb.cc00.1d1f    DYNAMIC     Gi1/0/8
+100     aabb.cc00.1d31    DYNAMIC     Gi1/0/9
+100     aabb.cc00.1fda    DYNAMIC     Gi1/0/10
+100     aabb.cc00.1fec    DYNAMIC     Gi1/0/11
+100     aabb.cc00.1ffe    DYNAMIC     Gi1/0/12
+100     aabb.cc00.2010    DYNAMIC     Gi1/0/13
+100     aabb.cc00.2022    DYNAMIC     Gi1/0/14
+912     aabb.cc01.1500    DYNAMIC     Gi1/0/15
+100     aabb.cc00.2046    DYNAMIC     Gi1/0/16
+100     aabb.cc00.2058    DYNAMIC     Gi1/0/17
+100     aabb.cc00.1ff5    DYNAMIC     Gi1/0/20
+100     aabb.cc00.1cb2    DYNAMIC     Te2/0/1
+100     aabb.cc00.1cc4    DYNAMIC     Te2/0/2
+100     aabb.cc00.1cd6    DYNAMIC     Te2/0/3
+100     aabb.cc00.1ce8    DYNAMIC     Te2/0/4
+100     aabb.cc00.1d0c    DYNAMIC     Te2/0/6
+100     aabb.cc00.1d1e    DYNAMIC     Te2/0/7
+100     aabb.cc00.1d30    DYNAMIC     Te2/0/8
+100     aabb.cc00.1d42    DYNAMIC     Te2/0/9
+100     aabb.cc00.1feb    DYNAMIC     Te2/0/10
+100     aabb.cc00.1ffd    DYNAMIC     Te2/0/11
+100     aabb.cc00.200f    DYNAMIC     Te2/0/12
+100     aabb.cc00.2021    DYNAMIC     Te2/0/13
+100     aabb.cc00.2033    DYNAMIC     Te2/0/14
+100     aabb.cc00.2045    DYNAMIC     Te2/0/15
+100     aabb.cc00.2057    DYNAMIC     Te2/0/16
+100     aabb.cc00.2069    DYNAMIC     Te2/0/17
+100     aabb.cc00.207b    DYNAMIC     Te2/0/18
+100     aabb.cc00.208d    DYNAMIC     Te2/0/19
+100     aabb.cc00.2006    DYNAMIC     Te2/0/20
+100     aabb.cc00.2018    DYNAMIC     Te2/0/21
+100     aabb.cc00.203c    DYNAMIC     Te2/0/23
+100     aabb.cc00.204e    DYNAMIC     Te2/0/24
+
+FICSITE01-ACC-SW01#show power inline
+Module   Available     Used    Remaining
+   (W)     (W)         (W)
+1        370.0         12.6    357.4
+Interface Admin  Oper       Power   Device              Class Max
+                             (Watts)
+Gi1/0/15 auto   on         6.1     IP Phone 7960       3     30.0
+
+>show interfaces Te1/1/1 transceiver detail
+Te1/1/1 25.20 89.00 85.00 -5.00 -9.00
+Te1/1/1 3.31 3.60 3.50 3.10 3.00
+Te1/1/1 5.20 13.00 12.40 2.00 1.00
+Te1/1/1 -5.26 1.00 -3.00 -9.51 -13.51
+Te1/1/1 -5.11 4.00 0.00 -17.00 -21.04
+
+>show interfaces Te2/1/8 transceiver detail
+Te2/1/8 25.10 89.00 85.00 -5.00 -9.00
+Te2/1/8 3.31 3.60 3.50 3.10 3.00
+Te2/1/8 5.20 13.00 12.40 2.00 1.00
+Te2/1/8 -5.26 1.00 -3.00 -9.51 -13.51
+Te2/1/8 -5.11 4.00 0.00 -17.00 -21.04
+
+FICSITE01-ACC-SW01#show switch detail
+Switch/Stack Mac Address : aabb.ccdd.ee00 - Local Mac Address
+Mac persistency wait time: Indefinite
+                                             H/W   Current
+Switch#   Role    Mac Address     Priority Version  State
+-------------------------------------------------------------------------------------
+1       Active   aabb.ccdd.ee01     15     V02     Ready
+2       Standby  aabb.ccdd.ee02     14     V02     Ready
+
+FICSITE01-ACC-SW01#show logging
+*Jun 21 08:00:01.000: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/18, changed state to down
+
+FICSITE01-ACC-SW01#show processes cpu
+CPU utilization for five seconds: 4%/0%; one minute: 3%; five minutes: 2%
+
+FICSITE01-ACC-SW01#show environment all
+FAN 1 is OK
+FAN 2 is OK
+TEMPERATURE: OK

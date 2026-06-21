@@ -1,0 +1,3 @@
+old_port,new_port,role,note
+Fi2/0/1,Fi2/0/1,access,same-name post five-gig access
+Fi2/0/2,Te2/0/2,access,pre old key covers post old name

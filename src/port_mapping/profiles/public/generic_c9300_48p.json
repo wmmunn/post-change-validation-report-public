@@ -1,0 +1,22 @@
+{
+  "profile_name": "generic_c9300_48p",
+  "description": "Generic 48-port Catalyst 9200/9300 access switch refresh template. Assumes copper access ports retain numbering and uplinks move to module ports.",
+  "source_models": ["generic-48-port-catalyst"],
+  "target_models": ["C9200-48", "C9300-48"],
+  "fallback": "same_name",
+  "access_port_rules": [
+    {
+      "source_range": "Gi1/0/1-48",
+      "target_range": "Gi1/0/1-48",
+      "role": "access"
+    }
+  ],
+  "uplink_rules": [
+    {
+      "source_ports": ["Gi1/0/49", "Gi1/0/50", "Gi1/0/51", "Gi1/0/52"],
+      "target_ports": ["Te1/1/1", "Te1/1/2", "Te1/1/3", "Te1/1/4"],
+      "role": "uplink",
+      "requires_operator_review": true
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+﻿# Post Change Validation Report — runtime dependencies
+customtkinter>=5.2.0
+# Optional: PDF export (export_pdf)
+reportlab>=4.0.0

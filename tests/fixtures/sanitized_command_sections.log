@@ -1,0 +1,14 @@
+ACCESS-SW01#show version
+Cisco IOS XE Software, Version 17.09.04
+
+ACCESS-SW01#show int status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Gi1/0/1   User Port          connected    100        a-full  a-1000 10/100/1000BaseTX
+
+#sho inventory
+NAME: "1", DESCR: "Sanitized switch"
+PID: C9300-48U          , VID: V01  , SN: SANITIZED1234
+
+>show interfaces TenGigabitEthernet1/1/1 transceiver detail
+Te1/1/1 25.20 89.00 85.00 -5.00 -9.00
+

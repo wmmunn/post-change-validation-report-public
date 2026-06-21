@@ -1,0 +1,47 @@
+{
+  "profile_name": "generic_mixed_24_48_to_mgig_stack",
+  "description": "Generic mixed Catalyst stack refresh profile. Member 1 is modeled as a legacy 24-port source switch and member 2 as a legacy 48-port source switch, both mapped to mGig-style target access ports with explicit uplinks.",
+  "source_models": ["generic-24-port-catalyst", "generic-48-port-catalyst"],
+  "target_models": ["C9300-24UX", "C9300-48UN", "C9300-mGig"],
+  "fallback": "same_name",
+  "member_rules": [
+    {
+      "member": 1,
+      "description": "Legacy 24-port source member mapped to mGig target member 1.",
+      "access_port_rules": [
+        {
+          "source_range": "Gi1/0/1-24",
+          "target_range": "Te1/0/1-24",
+          "role": "access"
+        }
+      ],
+      "uplink_rules": [
+        {
+          "source_ports": ["Gi1/0/25", "Gi1/0/27"],
+          "target_ports": ["Te1/1/1", "Te1/1/8"],
+          "role": "uplink",
+          "requires_operator_review": true
+        }
+      ]
+    },
+    {
+      "member": 2,
+      "description": "Legacy 48-port source member mapped to mGig target member 2.",
+      "access_port_rules": [
+        {
+          "source_range": "Gi2/0/1-48",
+          "target_range": "Te2/0/1-48",
+          "role": "access"
+        }
+      ],
+      "uplink_rules": [
+        {
+          "source_ports": ["Gi2/0/49", "Gi2/0/50", "Gi2/0/51", "Gi2/0/52"],
+          "target_ports": ["Te2/1/1", "Te2/1/2", "Te2/1/7", "Te2/1/8"],
+          "role": "uplink",
+          "requires_operator_review": true
+        }
+      ]
+    }
+  ]
+}
