@@ -438,6 +438,24 @@ class PdfExportStoryTests(unittest.TestCase):
         self.assertEqual(len(legacy), len(extracted))
         self.assertEqual(legacy, extracted)
 
+    def test_pdf_highlights_render_status_cards(self):
+        findings = [
+            Finding("WARN", "Access Port MAC Correlation", "Access-port MACs checked: 40.", ""),
+            Finding("PASS", "PoE", "1 previously powered access port(s) still show PoE after change.", ""),
+            Finding("PASS", "CDP Neighbors", "2 cdp neighbor record(s) matched after change.", ""),
+            Finding("WARN", "Interface Status", "1 mapped port issue(s) require review.", ""),
+            Finding("PASS", "Trunks", "No pre-change trunk ports disappeared.", ""),
+            Finding("PASS", "STP Root", "2 STP VLAN(s) retained expected root behavior.", ""),
+        ]
+        story = build_pdf_story(findings, "pre.log", "post.log", "")
+        fingerprint = story_fingerprint(story)
+        joined = "\n".join(str(item) for item in fingerprint)
+        self.assertNotIn("('str', 'Area')", joined)
+        self.assertIn("MAC Addresses", joined)
+        self.assertIn("PoE Delivery", joined)
+        self.assertIn("Neighbors", joined)
+        self.assertIn("STP Root", joined)
+
     def test_before_inputs_wires_section_appenders_in_order(self):
         findings = sanitized_pdf_findings()
         call_order: list[str] = []

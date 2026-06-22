@@ -215,6 +215,56 @@ def status_icon_html(severity: str) -> str:
     }.get(severity, "i")
 
 
+def pdf_highlight_palette(severity: str, colors) -> Tuple[object, object]:
+    """Return accent and background colors for PDF highlight cards."""
+    return {
+        "PASS": (colors.HexColor("#238636"), colors.HexColor("#eef8ef")),
+        "WARN": (colors.HexColor("#b7791f"), colors.HexColor("#fff8e6")),
+        "FAIL": (colors.HexColor("#b42318"), colors.HexColor("#fff1f0")),
+        "INFO": (colors.HexColor("#607d8b"), colors.HexColor("#f5f7f8")),
+    }.get(severity, (colors.grey, colors.whitesmoke))
+
+
+def build_pdf_highlight_card(
+    label: str,
+    severity: str,
+    status_label: str,
+    text: str,
+    *,
+    paragraph_cls,
+    table_cls,
+    table_style_cls,
+    normal_style,
+    colors,
+    card_width: float,
+):
+    accent, bg = pdf_highlight_palette(severity, colors)
+    icon = status_icon_html(severity)
+    status_line = paragraph_cls(
+        '<font backColor="%s" color="white" size="8"> %s </font> <b><font size="8">%s</font></b>'
+        % (accent.hexval(), icon, html.escape(status_label)),
+        normal_style,
+    )
+    title = paragraph_cls('<b><font size="11">%s</font></b>' % html.escape(label), normal_style)
+    body = paragraph_cls('<font size="8">%s</font>' % html.escape(text), normal_style)
+    card = table_cls([[status_line], [title], [body]], colWidths=[card_width])
+    card.setStyle(
+        table_style_cls(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), bg),
+                ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#c9d2c9")),
+                ("LINEBEFORE", (0, 0), (0, -1), 5, accent),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+                ("TOPPADDING", (0, 0), (-1, -1), 8),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
+    return card
+
+
 def build_highlights_html(findings: Iterable[object]) -> str:
     cards = []
     for label, severity, status_label, text in report_highlights(findings):
@@ -526,30 +576,49 @@ def append_pdf_review_required(story: list, findings: List[object], *, paragraph
 
 
 def append_pdf_highlights(story: list, findings: List[object], *, paragraph_cls, spacer_cls, table_cls, table_style_cls, normal_style, colors, inch: float) -> None:
-    highlight_rows = [["Area", "Status", "Summary"]]
-    highlight_styles = [
-        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-        ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("FONTSIZE", (0, 0), (-1, -1), 8),
-    ]
-    status_colors = {
-        "PASS": colors.HexColor("#dff3df"),
-        "WARN": colors.HexColor("#fff2a8"),
-        "FAIL": colors.HexColor("#ffd6d2"),
-        "INFO": colors.HexColor("#f5f7f8"),
-    }
-    for idx, (label, severity, status_label, text) in enumerate(report_highlights(findings), start=1):
-        highlight_rows.append([
-            paragraph_cls(html.escape(label), normal_style),
-            paragraph_cls(html.escape(status_label), normal_style),
-            paragraph_cls(html.escape(text), normal_style),
-        ])
-        highlight_styles.append(("BACKGROUND", (0, idx), (-1, idx), status_colors.get(severity, colors.whitesmoke)))
-        highlight_styles.append(("TEXTCOLOR", (1, idx), (1, idx), colors.HexColor("#176b1d") if severity == "PASS" else colors.black))
-    highlights_tbl = table_cls(highlight_rows, colWidths=[1.55 * inch, 1.05 * inch, 7.25 * inch], repeatRows=1)
-    highlights_tbl.setStyle(table_style_cls(highlight_styles))
-    story.extend([highlights_tbl, spacer_cls(1, 12)])
+    highlights = list(report_highlights(findings))
+    if not highlights:
+        return
+
+    cards_per_row = 3
+    gap = 0.12 * inch
+    page_width = 10.3 * inch
+    card_width = (page_width - gap * (cards_per_row - 1)) / cards_per_row
+
+    for row_start in range(0, len(highlights), cards_per_row):
+        row_items = highlights[row_start : row_start + cards_per_row]
+        row_cards = [
+            build_pdf_highlight_card(
+                label,
+                severity,
+                status_label,
+                text,
+                paragraph_cls=paragraph_cls,
+                table_cls=table_cls,
+                table_style_cls=table_style_cls,
+                normal_style=normal_style,
+                colors=colors,
+                card_width=card_width,
+            )
+            for label, severity, status_label, text in row_items
+        ]
+        while len(row_cards) < cards_per_row:
+            row_cards.append("")
+        grid = table_cls([row_cards], colWidths=[card_width] * cards_per_row)
+        grid.setStyle(
+            table_style_cls(
+                [
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                    ("TOPPADDING", (0, 0), (-1, -1), 0),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+                ]
+            )
+        )
+        story.append(grid)
+        story.append(spacer_cls(1, 8))
+    story.append(spacer_cls(1, 4))
 
 
 def append_pdf_findings_table(story: list, findings: List[object], *, paragraph_cls, table_cls, table_style_cls, normal_style, small_style, colors, inch: float) -> None:
