@@ -21,6 +21,19 @@ This tool accepts **Cisco IOS and IOS-XE** command-output logs only. At file sel
 
 **Not supported:** NX-OS, IOS-XR, and other Cisco OS families. Parsers and refresh assumptions in this tool target IOS/IOS-XE CLI formatting, interface naming, and command output shapes. Logs from other platforms are rejected with a blocking message rather than producing misleading findings.
 
+**Layer 2 access switches only.** The tool is designed exclusively for 
+Catalyst access switches operating as Layer 2 devices. It does not validate 
+Layer 3 configurations, inter-VLAN routing, routed port behavior, SVI routing 
+state, or any routing protocol configuration.
+
+Catalyst 9300 series switches and similar platforms deployed as Layer 3 
+devices — including configurations with routed access ports, distribution-layer 
+routing, or inter-VLAN routing via SVIs — are outside the supported scope. 
+Submitting logs from a Layer 3-configured switch may produce incomplete, 
+misleading, or false-positive findings. The tool has no mechanism to detect 
+or warn against this condition. Operator awareness of the target switch role 
+is required before use.
+
 See `docs/environment-assumptions.md` for additional scope notes.
 
 ## Entry Point
@@ -143,6 +156,13 @@ Source-confirmed examples:
 - Findings are review evidence, not automatic closure approval.
 - Raw pre/post command logs should not be used as documentation examples unless sanitized.
 - Pre-release development and testing are summarized in [Development & Testing History](docs/development-and-testing-history.md). That summary does not substitute for independent operator verification.
+- **Layer 2 access switches only.** This tool does not understand or validate 
+  Layer 3 switch configurations. A Catalyst 9300 or similar platform deployed 
+  as a Layer 3 device will not be rejected at file selection, but the analysis 
+  output will be incomplete and potentially misleading. Do not use this tool 
+  to validate refreshes of switches operating in a Layer 3 or distribution-layer 
+  role without understanding that the findings will not reflect the full scope 
+  of the device's configuration.
 
 ## Sample Data
 
