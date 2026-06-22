@@ -10,7 +10,7 @@ The tool compares command-output evidence, applies environment-aware port mappin
 
 It is an offline review tool. It does not connect to devices or run commands.
 
-An example of the report it produces can be found [here](https://github.com/wmmunn/post-change-validation-report-public/blob/main/sample_data/sample_report.pdf)).
+An example of the report it produces can be found [here](https://github.com/wmmunn/post-change-validation-report-public/blob/main/sample_data/sample_report.pdf).
 
 
 ![Post-Change Validation Reviewer findings table](docs/gui-findings-table.png)
