@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import html
 import re
-from typing import Dict
+from typing import Dict, Optional
 
 
 POE_DETAIL_PORT_PATTERN = re.compile(r"(?P<pre>\S+)\s*->\s*(?P<post>\S+):\s*(?P<status>[^|]+)")
@@ -75,11 +75,11 @@ def poe_budget_pct(value: float, available: float) -> float:
     return max(0.0, min(100.0, (value / available) * 100.0))
 
 
-def build_poe_budget_html(detail: str) -> str:
+def build_poe_budget_render_data(detail: str) -> Dict[str, object] | None:
     budgets = parse_poe_budget_detail(detail)
     post = budgets.get("post") or budgets.get("pre")
     if not post:
-        return ""
+        return None
     available = float(post["available"])
     post_used = float(post["used"])
     pre = budgets.get("pre")
@@ -87,22 +87,41 @@ def build_poe_budget_html(detail: str) -> str:
     used_pct = poe_budget_pct(post_used, available)
     pre_pct = poe_budget_pct(pre_used, available) if pre_used is not None else None
     remaining = float(post.get("remaining", max(0.0, available - post_used)))
-    delta = ""
+    delta_text = ""
     context_note = ""
     speed_upgrade = parse_poe_speed_upgrade_detail(detail)
     if pre_used is not None:
         delta_value = post_used - pre_used
-        delta = f"; delta {delta_value:+.2f} W"
+        delta_text = f"; delta {delta_value:+.2f} W"
         if delta_value > 0 and used_pct < 70.0 and speed_upgrade:
             context_note = (
-                "<div class='poe-budget-note'>PoE draw increased after the change, and %s powered mapped endpoint(s) "
-                "also negotiated higher post-change interface speed. Post-change utilization remains low.</div>"
-            ) % html.escape(str(speed_upgrade.get("count", "")))
+                "PoE draw increased after the change, and %s powered mapped endpoint(s) "
+                "also negotiated higher post-change interface speed. Post-change utilization remains low."
+            ) % speed_upgrade.get("count", "")
         elif delta_value > 0 and used_pct < 70.0:
             context_note = (
-                "<div class='poe-budget-note'>PoE draw increased after the change, but utilization remains low; "
-                "this can be consistent with APs/endpoints negotiating higher access capability after the refresh.</div>"
+                "PoE draw increased after the change, but utilization remains low; "
+                "this can be consistent with APs/endpoints negotiating higher access capability after the refresh."
             )
+    return {
+        "summary": "Post-change used %.2f W / %.2f W (%.1f%%); remaining %.2f W%s"
+        % (post_used, available, used_pct, remaining, delta_text),
+        "context_note": context_note,
+        "pre_pct": pre_pct,
+        "post_pct": used_pct,
+    }
+
+
+def build_poe_budget_html(detail: str) -> str:
+    data = build_poe_budget_render_data(detail)
+    if not data:
+        return ""
+    used_pct = float(data["post_pct"])
+    pre_pct = data.get("pre_pct")
+    pre_pct = float(pre_pct) if pre_pct is not None else None
+    context_note = str(data.get("context_note") or "")
+    if context_note:
+        context_note = "<div class='poe-budget-note'>%s</div>" % html.escape(context_note)
     pre_marker = (
         "<span class='poe-budget-marker poe-budget-pre' title='Pre-change used' style='left: %.1f%%'></span>" % pre_pct
         if pre_pct is not None else ""
@@ -119,11 +138,11 @@ def build_poe_budget_html(detail: str) -> str:
     return (
         "<div class='poe-budget-card'>"
         "<div class='poe-budget-title'>PoE Budget <span>(gray = pre-change, black = post-change)</span></div>"
-        "<div class='poe-budget-summary'>Post-change used %.2f W / %.2f W (%.1f%%); remaining %.2f W%s</div>"
+        "<div class='poe-budget-summary'>%s</div>"
         "%s"
         "%s"
         "</div>"
-    ) % (post_used, available, used_pct, remaining, html.escape(delta), bar, context_note)
+    ) % (html.escape(str(data["summary"])), bar, context_note)
 
 
 def build_poe_html(severity: str, detail: str) -> str:

@@ -15,8 +15,8 @@ from src.post_change_validation_logs_rendering import parse_log_detail_line
 from src.post_change_validation_mac_rendering import parse_mac_correlation_detail
 from src.post_change_validation_models import Finding
 from src.post_change_validation_neighbor_rendering import parse_neighbor_detail_line
-from src.post_change_validation_poe_rendering import parse_poe_detail_line
-from src.post_change_validation_pdf_rendering import append_detail_table, pdf_paragraph
+from src.post_change_validation_poe_rendering import build_poe_budget_render_data, parse_poe_detail_line
+from src.post_change_validation_pdf_rendering import append_detail_table, build_poe_budget_pdf_card, pdf_paragraph
 from src.post_change_validation_pdf_sections import (
     append_interface_status_pdf_sections,
     append_inventory_pdf_sections,
@@ -163,6 +163,7 @@ def _detail_table(
     normal_style,
     row_backgrounds: Optional[List[object]] = None,
     header_style=None,
+    before_table: Optional[List[object]] = None,
 ) -> None:
     append_detail_table(
         story,
@@ -181,7 +182,39 @@ def _detail_table(
         normal_style=normal_style,
         row_backgrounds=row_backgrounds,
         header_style=header_style,
+        before_table=before_table,
     )
+
+
+def _pdf_poe_budget_bar(
+    drawing_cls,
+    rect_cls,
+    line_cls,
+    colors,
+    pre_pct: Optional[float],
+    post_pct: float,
+    *,
+    width: float,
+    height: float = 18,
+):
+    d = drawing_cls(width, height + 4)
+    bar_y = 2
+    bar_h = height
+    zones = [
+        (0.0, 0.70, colors.HexColor("#bfe8c4")),
+        (0.70, 0.90, colors.HexColor("#ffe19a")),
+        (0.90, 1.0, colors.HexColor("#f4b4ad")),
+    ]
+    for start, end, fill in zones:
+        if end > start:
+            d.add(rect_cls(start * width, bar_y, (end - start) * width, bar_h, fillColor=fill, strokeColor=None))
+    d.add(rect_cls(0, bar_y, width, bar_h, fillColor=None, strokeColor=colors.grey, strokeWidth=0.5))
+    if pre_pct is not None:
+        pre_x = max(0.0, min(100.0, float(pre_pct))) / 100.0 * width
+        d.add(line_cls(pre_x, 0, pre_x, height + 4, strokeColor=colors.HexColor("#7a7a7a"), strokeWidth=1.2))
+    post_x = max(0.0, min(100.0, float(post_pct))) / 100.0 * width
+    d.add(line_cls(post_x, 0, post_x, height + 4, strokeColor=colors.black, strokeWidth=1.5))
+    return d
 
 
 def _pdf_transceiver_bar(
@@ -238,6 +271,7 @@ def _append_structured_detail_sections(
     normal,
     colors,
     pdf_transceiver_bar,
+    poe_budget_card,
 ) -> None:
     append_port_map_pdf_sections(
         findings,
@@ -255,6 +289,7 @@ def _append_structured_detail_sections(
         findings,
         is_poe_finding=is_poe_finding,
         parse_poe_detail_line=parse_poe_detail_line,
+        poe_budget_card=poe_budget_card,
         detail_table=detail_table,
         paragraph=p,
         tiny_style=tiny,
@@ -380,6 +415,7 @@ def build_pdf_story(
     normal = styles["Normal"]
     small = ParagraphStyle("small", parent=normal, fontName="Courier", fontSize=7, leading=8)
     tiny = ParagraphStyle("tiny", parent=normal, fontSize=6.5, leading=7.5)
+    note = ParagraphStyle("poe_note", parent=tiny, textColor=colors.HexColor("#34454d"))
     pass_a = colors.HexColor("#eef8ef")
     pass_b = colors.HexColor("#dff3df")
     info_bg = colors.HexColor("#f5f7f8")
@@ -400,6 +436,7 @@ def build_pdf_story(
         widths: List[float],
         row_backgrounds: Optional[List[object]] = None,
         header_style=normal,
+        before_table: Optional[List[object]] = None,
     ) -> None:
         _detail_table(
             story,
@@ -418,7 +455,10 @@ def build_pdf_story(
             normal_style=normal,
             row_backgrounds=row_backgrounds,
             header_style=header_style,
+            before_table=before_table,
         )
+
+    poe_detail_width = 9.75 * inch
 
     def pdf_transceiver_bar(
         value: float,
@@ -441,6 +481,24 @@ def build_pdf_story(
             high_alarm,
         )
 
+    def pdf_poe_budget_bar(pre_pct: Optional[float], post_pct: float, width: float):
+        return _pdf_poe_budget_bar(Drawing, Rect, Line, colors, pre_pct, post_pct, width=width)
+
+    def poe_budget_card(detail: str):
+        return build_poe_budget_pdf_card(
+            detail,
+            paragraph_cls=Paragraph,
+            table_cls=Table,
+            table_style_cls=TableStyle,
+            colors=colors,
+            tiny_style=tiny,
+            normal_style=normal,
+            note_style=note,
+            build_poe_budget_render_data=build_poe_budget_render_data,
+            poe_budget_bar=pdf_poe_budget_bar,
+            card_width=poe_detail_width,
+        )
+
     def append_structured_detail_sections() -> None:
         _append_structured_detail_sections(
             findings,
@@ -456,6 +514,7 @@ def build_pdf_story(
             normal=normal,
             colors=colors,
             pdf_transceiver_bar=pdf_transceiver_bar,
+            poe_budget_card=poe_budget_card,
         )
 
     append_pdf_report_shell(

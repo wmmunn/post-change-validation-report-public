@@ -5,6 +5,7 @@ from src.post_change_validation_models import PortMapRow
 from src.post_change_validation_poe import compare_poe_delivery
 from src.post_change_validation_poe_rendering import (
     build_poe_budget_html,
+    build_poe_budget_render_data,
     build_poe_html,
     parse_poe_detail_line,
 )
@@ -28,6 +29,22 @@ class PoeAnalysisRenderingTests(unittest.TestCase):
         self.assertIn("poe-budget-post", html)
         self.assertIn("left: 13.6%", html)
         self.assertIn("PoE draw increased after the change, and 2 powered mapped endpoint(s)", html)
+
+    def test_budget_render_data_matches_html_summary(self):
+        detail = "\n".join(
+            [
+                "POE_BUDGET|pre|125.00|24.30|100.70|Available:125.0(w) Used:24.3(w) Remaining:100.7(w)",
+                "POE_BUDGET|post|400.00|54.30|345.70|Available:400.0(w) Used:54.3(w) Remaining:345.7(w)",
+                "POE_SPEED_UPGRADE|2|Gi1/0/1 -> Te1/0/1: 1000 -> 2.5G",
+            ]
+        )
+
+        data = build_poe_budget_render_data(detail)
+
+        self.assertEqual("Post-change used 54.30 W / 400.00 W (13.6%); remaining 345.70 W; delta +30.00 W", data["summary"])
+        self.assertAlmostEqual(6.075, data["pre_pct"])
+        self.assertAlmostEqual(13.575, data["post_pct"])
+        self.assertIn("2 powered mapped endpoint(s)", data["context_note"])
 
     def test_poe_html_renders_detail_rows_and_escapes_evidence(self):
         detail = "Gi1/0/1 -> Te1/0/1: PoE still delivering | pre=Gi1/0/1 auto on 6.3 <phone> | post=Te1/0/1 auto on 6.1 <phone>"

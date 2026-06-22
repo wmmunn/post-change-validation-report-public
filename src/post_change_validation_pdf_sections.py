@@ -81,6 +81,7 @@ def append_poe_pdf_sections(
     *,
     is_poe_finding: Callable[[object], bool],
     parse_poe_detail_line: Callable[[str], dict],
+    poe_budget_card: Callable[[str], object] | None,
     detail_table: Callable,
     paragraph: Callable,
     tiny_style,
@@ -94,7 +95,16 @@ def append_poe_pdf_sections(
             continue
         rows = []
         backgrounds = []
-        for idx, line in enumerate([ln for ln in (finding.detail or "").splitlines() if ln.strip() and not ln.startswith("...")]):
+        for idx, line in enumerate(
+            [
+                ln
+                for ln in (finding.detail or "").splitlines()
+                if ln.strip()
+                and not ln.startswith("...")
+                and not ln.startswith("POE_BUDGET|")
+                and not ln.startswith("POE_SPEED_UPGRADE|")
+            ]
+        ):
             parsed = parse_poe_detail_line(line)
             rows.append(
                 [
@@ -106,6 +116,13 @@ def append_poe_pdf_sections(
                 ]
             )
             backgrounds.append(warn_bg if finding.severity == "WARN" else (pass_a if idx % 2 == 0 else pass_b))
+        before_table = None
+        if poe_budget_card:
+            card = poe_budget_card(finding.detail)
+            if card is not None:
+                before_table = [card]
+        if not rows and not before_table:
+            continue
         detail_table(
             "PoE Detail",
             finding.finding,
@@ -114,6 +131,7 @@ def append_poe_pdf_sections(
             [0.8 * inch, 0.8 * inch, 1.25 * inch, 3.45 * inch, 3.45 * inch],
             backgrounds,
             tiny_style,
+            before_table=before_table,
         )
 
 

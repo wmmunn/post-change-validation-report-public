@@ -1,5 +1,12 @@
 # Post Change Validation Tool — Changelog
 
+
+## v1.0.1 — PDF PoE budget meter and bar layout
+
+- PDF PoE budget meter aligned with HTML reference rendering.
+- PoE bar width fix (686pt, fits within card layout).
+- Regenerated sample reports; `scripts/regenerate_sample_reports.py` for reproducible samples.
+
 ## v1.0.0 — Initial Public Release
 
 First public release of the Post Change Validation Tool.

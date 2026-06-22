@@ -32,7 +32,12 @@ from src.post_change_validation_pdf import (
     export_pdf_from_html_browser,
     find_browser_pdf_renderer,
 )
-from src.post_change_validation_pdf_rendering import append_detail_table, pdf_paragraph
+from src.post_change_validation_pdf_rendering import (
+    append_detail_table,
+    build_poe_budget_pdf_card,
+    pdf_paragraph,
+    poe_budget_bar_width,
+)
 from src.post_change_validation_pdf_sections import (
     append_interface_status_pdf_sections,
     append_inventory_pdf_sections,
@@ -44,7 +49,7 @@ from src.post_change_validation_pdf_sections import (
     append_stp_root_pdf_sections,
     append_transceiver_pdf_sections,
 )
-from src.post_change_validation_poe_rendering import parse_poe_detail_line
+from src.post_change_validation_poe_rendering import build_poe_budget_render_data, parse_poe_detail_line
 from src.post_change_validation_port_map_rendering import parse_port_map_detail
 from post_change_validation_report_shell import (
     append_pdf_report_shell,
@@ -177,6 +182,7 @@ def legacy_build_pdf_story(
     normal = styles["Normal"]
     small = ParagraphStyle("small", parent=normal, fontName="Courier", fontSize=7, leading=8)
     tiny = ParagraphStyle("tiny", parent=normal, fontSize=6.5, leading=7.5)
+    note = ParagraphStyle("poe_note", parent=tiny, textColor=colors.HexColor("#34454d"))
     pass_a = colors.HexColor("#eef8ef")
     pass_b = colors.HexColor("#dff3df")
     info_bg = colors.HexColor("#f5f7f8")
@@ -197,6 +203,7 @@ def legacy_build_pdf_story(
         widths: List[float],
         row_backgrounds: Optional[List[object]] = None,
         header_style=normal,
+        before_table: Optional[List[object]] = None,
     ) -> None:
         append_detail_table(
             story,
@@ -215,7 +222,10 @@ def legacy_build_pdf_story(
             normal_style=normal,
             row_backgrounds=row_backgrounds,
             header_style=header_style,
+            before_table=before_table,
         )
+
+    poe_detail_width = 9.75 * inch
 
     def pdf_transceiver_bar(
         value: float,
@@ -251,6 +261,26 @@ def legacy_build_pdf_story(
         d.add(Line(post_x, 0, post_x, height, strokeColor=colors.black, strokeWidth=1.5))
         return d
 
+    def pdf_poe_budget_bar(pre_pct: Optional[float], post_pct: float, width: float) -> Drawing:
+        from src.post_change_validation_pdf import _pdf_poe_budget_bar
+
+        return _pdf_poe_budget_bar(Drawing, Rect, Line, colors, pre_pct, post_pct, width=width)
+
+    def poe_budget_card(detail: str):
+        return build_poe_budget_pdf_card(
+            detail,
+            paragraph_cls=Paragraph,
+            table_cls=Table,
+            table_style_cls=TableStyle,
+            colors=colors,
+            tiny_style=tiny,
+            normal_style=normal,
+            note_style=note,
+            build_poe_budget_render_data=build_poe_budget_render_data,
+            poe_budget_bar=pdf_poe_budget_bar,
+            card_width=poe_detail_width,
+        )
+
     def append_structured_detail_sections() -> None:
         append_port_map_pdf_sections(
             findings,
@@ -268,6 +298,7 @@ def legacy_build_pdf_story(
             findings,
             is_poe_finding=is_poe_finding,
             parse_poe_detail_line=parse_poe_detail_line,
+            poe_budget_card=poe_budget_card,
             detail_table=detail_table,
             paragraph=p,
             tiny_style=tiny,
@@ -453,6 +484,50 @@ class PdfExportStoryTests(unittest.TestCase):
 
     def test_export_pdf_writes_pdf_file(self):
         findings = sanitized_pdf_findings()
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            out_path = Path(tmp_dir) / "report.pdf"
+            export_pdf(findings, "pre.log", "post.log", "", str(out_path))
+            self.assertTrue(out_path.exists())
+            self.assertGreater(out_path.stat().st_size, 0)
+
+    def test_export_pdf_renders_poe_budget_meter_without_raw_pipe_rows(self):
+        findings = [
+            Finding(
+                "PASS",
+                "PoE",
+                "26 previously powered access port(s) still show PoE after change.",
+                "\n".join(
+                    [
+                        "POE_BUDGET|pre|1745.00|90.00|1655.00|Available:1745.0(w) Used:90.0(w) Remaining:1655.0(w)",
+                        "POE_BUDGET|post|1745.00|209.70|1535.30|Available:1745.0(w) Used:209.7(w) Remaining:1535.3(w)",
+                        "POE_SPEED_UPGRADE|7|Gi1/0/2 -> Te1/0/2: 1000 -> 2.5G",
+                        "Gi1/0/2 -> Te1/0/2: PoE still delivering | pre=Gi1/0/2 auto on 4.3 | post=Te1/0/2 auto on 4.1",
+                    ]
+                ),
+            )
+        ]
+        story = build_pdf_story(findings, "pre.log", "post.log", "")
+        fingerprint = story_fingerprint(story)
+        joined = "\n".join(str(item) for item in fingerprint)
+        self.assertIn("PoE Budget", joined)
+        self.assertIn("Post-change used 209.70 W / 1745.00 W (12.0%)", joined)
+        self.assertIn("Gi1/0/2", joined)
+        self.assertNotIn("POE_BUDGET|", joined)
+        self.assertNotIn("POE_SPEED_UPGRADE|", joined)
+
+        def collect_drawings(items):
+            drawings = []
+            for item in items:
+                if item[0] == "Drawing":
+                    drawings.append(item)
+                elif item[0] == "Table":
+                    for row in item[1]:
+                        drawings.extend(collect_drawings(row))
+            return drawings
+
+        drawing_items = collect_drawings(fingerprint)
+        self.assertTrue(any(item[1] == poe_budget_bar_width(9.75 * inch) for item in drawing_items))
+
         with tempfile.TemporaryDirectory() as tmp_dir:
             out_path = Path(tmp_dir) / "report.pdf"
             export_pdf(findings, "pre.log", "post.log", "", str(out_path))

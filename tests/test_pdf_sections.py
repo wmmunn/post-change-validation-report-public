@@ -5,6 +5,7 @@ from src.post_change_validation_interface_status_rendering import parse_interfac
 from src.post_change_validation_logs_rendering import parse_log_detail_line
 from src.post_change_validation_mac_rendering import parse_mac_correlation_detail
 from src.post_change_validation_neighbor_rendering import parse_neighbor_detail_line
+from src.post_change_validation_pdf_rendering import build_poe_budget_pdf_card, poe_budget_bar_width
 from src.post_change_validation_pdf_sections import (
     append_interface_status_pdf_sections,
     append_inventory_pdf_sections,
@@ -17,7 +18,7 @@ from src.post_change_validation_pdf_sections import (
     append_transceiver_pdf_sections,
 )
 from src.post_change_validation_inventory_rendering import parse_inventory_detail
-from src.post_change_validation_poe_rendering import parse_poe_detail_line
+from src.post_change_validation_poe_rendering import build_poe_budget_render_data, parse_poe_detail_line
 from src.post_change_validation_port_map_rendering import parse_port_map_detail
 from src.post_change_validation_stp_rendering import parse_stp_detail_line
 from src.post_change_validation_transceivers import parse_transceiver_visual_rows, transceiver_level_class
@@ -149,6 +150,9 @@ class PdfSectionTests(unittest.TestCase):
             "PoE delivery restored on mapped endpoint.",
             "\n".join(
                 [
+                    "POE_BUDGET|pre|125.00|24.30|100.70|Available:125.0(w) Used:24.3(w) Remaining:100.7(w)",
+                    "POE_BUDGET|post|400.00|54.30|345.70|Available:400.0(w) Used:54.3(w) Remaining:345.7(w)",
+                    "POE_SPEED_UPGRADE|2|Gi1/0/1 -> Te1/0/1: 1000 -> 2.5G",
                     "Gi1/0/1 -> Te1/0/1: PoE still delivering | pre=Gi1/0/1 auto on 6.3 | post=Te1/0/1 auto on 6.1",
                     "... truncated ...",
                     "Gi1/0/2 -> Te1/0/2: PoE still delivering | pre=Gi1/0/2 auto on 4.3 | post=Te1/0/2 auto on 4.1",
@@ -157,12 +161,14 @@ class PdfSectionTests(unittest.TestCase):
         )
         finding.severity = "PASS"
         calls = []
+        budget_calls = []
 
         append_poe_pdf_sections(
             [FakeFinding("Logs", "Ignore", "detail"), finding],
             is_poe_finding=lambda item: item.category == "PoE",
             parse_poe_detail_line=parse_poe_detail_line,
-            detail_table=lambda *args: calls.append(args),
+            poe_budget_card=lambda detail: budget_calls.append(detail) or "budget-card",
+            detail_table=lambda *args, **kwargs: calls.append((args, kwargs)),
             paragraph=lambda text, style: f"{style}:{text}",
             tiny_style="tiny",
             inch=10.0,
@@ -171,8 +177,12 @@ class PdfSectionTests(unittest.TestCase):
             pass_b="pass-b",
         )
 
+        self.assertEqual(1, len(budget_calls))
+        self.assertEqual(finding.detail, budget_calls[0])
         self.assertEqual(1, len(calls))
-        title, finding_text, header, rows, widths, backgrounds, header_style = calls[0]
+        args, kwargs = calls[0]
+        title, finding_text, header, rows, widths, backgrounds, header_style = args
+        self.assertEqual(["budget-card"], kwargs.get("before_table"))
         self.assertEqual("PoE Detail", title)
         self.assertEqual(finding.finding, finding_text)
         self.assertEqual(["Pre Port", "Post Port", "Status", "Pre Evidence", "Post Evidence"], header)
@@ -193,7 +203,8 @@ class PdfSectionTests(unittest.TestCase):
             [finding],
             is_poe_finding=lambda item: item.category == "PoE",
             parse_poe_detail_line=parse_poe_detail_line,
-            detail_table=lambda *args: calls.append(args),
+            poe_budget_card=lambda detail: None,
+            detail_table=lambda *args, **kwargs: calls.append((args, kwargs)),
             paragraph=lambda text, style: f"{style}:{text}",
             tiny_style="tiny",
             inch=10.0,
@@ -202,7 +213,59 @@ class PdfSectionTests(unittest.TestCase):
             pass_b="pass-b",
         )
 
-        self.assertEqual(["warn"], calls[0][5])
+        self.assertEqual(["warn"], calls[0][0][5])
+
+    def test_build_poe_budget_pdf_card_renders_summary_bar_and_context_note(self):
+        detail = "\n".join(
+            [
+                "POE_BUDGET|pre|125.00|24.30|100.70|Available:125.0(w) Used:24.3(w) Remaining:100.7(w)",
+                "POE_BUDGET|post|400.00|54.30|345.70|Available:400.0(w) Used:54.3(w) Remaining:345.7(w)",
+                "POE_SPEED_UPGRADE|2|Gi1/0/1 -> Te1/0/1: 1000 -> 2.5G",
+            ]
+        )
+        bar_calls = []
+
+        class FakeTable:
+            def __init__(self, rows, colWidths=None):
+                self.rows = rows
+                self.colWidths = colWidths
+
+            def setStyle(self, _style):
+                return None
+
+        card = build_poe_budget_pdf_card(
+            detail,
+            paragraph_cls=lambda text, style: ("Paragraph", style, text),
+            table_cls=FakeTable,
+            table_style_cls=lambda styles: styles,
+            colors=type("Colors", (), {"HexColor": lambda _self, value: value})(),
+            tiny_style="tiny",
+            normal_style="normal",
+            note_style="note",
+            build_poe_budget_render_data=build_poe_budget_render_data,
+            poe_budget_bar=lambda pre_pct, post_pct, width: bar_calls.append((pre_pct, post_pct, width))
+            or ("Drawing", pre_pct, post_pct),
+            card_width=702,
+        )
+
+        self.assertAlmostEqual(6.075, bar_calls[0][0])
+        self.assertAlmostEqual(13.575, bar_calls[0][1])
+        self.assertAlmostEqual(poe_budget_bar_width(702), bar_calls[0][2])
+        self.assertEqual(
+            ("Paragraph", "normal", '<b>PoE Budget</b> <font color="#4f5b57" size="7">(gray = pre-change, black = post-change)</font>'),
+            card.rows[0][0],
+        )
+        self.assertEqual(
+            ("Paragraph", "tiny", "Post-change used 54.30 W / 400.00 W (13.6%); remaining 345.70 W; delta +30.00 W"),
+            card.rows[1][0],
+        )
+        self.assertEqual("Drawing", card.rows[2][0][0])
+        self.assertAlmostEqual(6.075, card.rows[2][0][1])
+        self.assertAlmostEqual(13.575, card.rows[2][0][2])
+        self.assertIn(
+            "PoE draw increased after the change, and 2 powered mapped endpoint(s)",
+            card.rows[3][0][2],
+        )
 
     def test_append_neighbor_pdf_sections_builds_rows_and_backgrounds(self):
         finding = FakeFinding(

@@ -176,13 +176,13 @@ PDF-related tests skip automatically when `reportlab` is not installed.
 
 ## Current Status
 
-Version **1.0.0** â€” initial public release. The engine is modular under `src/` with a single active entry point, sanitized documentation, and a broad unittest suite covering parsers, port mapping, analysis orchestration, and report rendering. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
+Version **1.0.1** â€” initial public release. The engine is modular under `src/` with a single active entry point, sanitized documentation, and a broad unittest suite covering parsers, port mapping, analysis orchestration, and report rendering. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
 
 ## Download Integrity (Windows Standalone EXE)
 
 Published SHA256 for `dist/post_change_validation_reviewer.exe`:
 
-`802571c02161b727376c139be6d580ce61dbadeb851e54e47f3b1b2a7cc06341`
+7d3e54e0ae378d73139ef99191ce5ccc5ac983420cbbfaf94e58ec2e2aa4c681
 
 After download, verify locally (from the directory containing the EXE):
 
