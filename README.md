@@ -182,7 +182,7 @@ Version **1.0.0** â€” initial public release. The engine is modular under `
 
 Published SHA256 for `dist/post_change_validation_reviewer.exe`:
 
-`634367d57dc2aafdc8394442a9abef4137cc107d052bc0e1500b8a04daa9cc8c`
+`802571c02161b727376c139be6d580ce61dbadeb851e54e47f3b1b2a7cc06341`
 
 After download, verify locally (from the directory containing the EXE):
 
