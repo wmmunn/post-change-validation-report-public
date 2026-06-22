@@ -168,8 +168,8 @@ Source-confirmed examples:
 
 Sanitized pre/post log pairs for report demos live in [`sample_data/`](sample_data/). Start with the fictional two-switch C9300 refresh scenario:
 
-- `sample_data/synthetic_stack_refresh_pre.log` â€” pre-change WS-C2960XR stack capture
-- `sample_data/synthetic_stack_refresh_post.log` â€” post-change C9300 stack capture
+- `sample_data/synthetic_stack_refresh_pre.log` — pre-change WS-C2960XR stack capture
+- `sample_data/synthetic_stack_refresh_post.log` — post-change C9300 stack capture
 
 See [`sample_data/README.md`](sample_data/README.md) for the scenario narrative and expected finding highlights (including cross-source CDP/MAC/PoE INFO downgrade). Load both files in the reviewer with no manual port-map CSV to exercise auto-detection.
 
