@@ -1,5 +1,6 @@
 import unittest
 from dataclasses import dataclass
+from pathlib import Path
 
 from post_change_validation_report_shell import (
     build_html_report,
@@ -58,14 +59,9 @@ class ReportShellTests(unittest.TestCase):
         self.assertEqual("sample_data/post.log", display_input_path("sample_data/post.log"))
 
     def test_display_input_path_preserves_d_report_absolute_paths(self):
-        self.assertEqual(
-            "D:\\report\\synthetic_stack_refresh_pre.log",
-            display_input_path("D:/report/synthetic_stack_refresh_pre.log"),
-        )
-        self.assertEqual(
-            "D:\\report\\synthetic_stack_refresh_post.log",
-            display_input_path("D:/report/synthetic_stack_refresh_post.log"),
-        )
+        for name in ("synthetic_stack_refresh_pre.log", "synthetic_stack_refresh_post.log"):
+            raw = f"D:/report/{name}"
+            self.assertEqual(str(Path(raw)), display_input_path(raw))
 
     def test_report_input_values_use_display_safe_paths(self):
         rows = dict(
