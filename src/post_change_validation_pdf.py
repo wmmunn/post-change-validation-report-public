@@ -53,6 +53,11 @@ from src.post_change_validation_transceivers import (
 )
 
 
+def _browser_basename(browser: str) -> str:
+    """Return executable name even when browser path uses foreign OS separators."""
+    return Path(browser.replace("\\", "/")).name
+
+
 def find_browser_pdf_renderer() -> str:
     candidates = [
         shutil.which("msedge"),
@@ -129,7 +134,7 @@ def export_pdf_from_html_browser(findings: List[Finding], pre_file: str, post_fi
                         if out.exists():
                             out.unlink()
                         shutil.copy2(produced_pdf, out)
-                        return f"HTML-rendered PDF via {Path(browser).name} ({headless_flag}, {mode_name}, {launch_name})"
+                        return f"HTML-rendered PDF via {_browser_basename(browser)} ({headless_flag}, {mode_name}, {launch_name})"
                     err = (result.stderr or result.stdout or "Browser PDF export failed.").strip()
                     produced = ", ".join(str(p.relative_to(tmp_root)) for p in tmp_root.rglob("*.pdf")) or "no pdf files produced"
                     errors.append(f"{headless_flag}/{mode_name}/{launch_name}: return={result.returncode}; {err[:350]}; {produced}")

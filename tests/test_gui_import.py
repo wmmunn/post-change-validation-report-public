@@ -5,18 +5,22 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-# Headless Linux CI (ubuntu-latest) has no DISPLAY; Tk/CustomTkinter needs one to open a window.
-_GUI_NEEDS_DISPLAY = sys.platform.startswith("linux") and not os.environ.get("DISPLAY")
-_SKIP_GUI_DISPLAY = unittest.skipIf(_GUI_NEEDS_DISPLAY, "GUI tests require a display (DISPLAY or xvfb)")
+
+def _gui_tests_supported() -> bool:
+    try:
+        import tkinter  # noqa: F401
+    except ImportError:
+        return False
+    return not (sys.platform.startswith("linux") and not os.environ.get("DISPLAY"))
 
 
+@unittest.skipUnless(_gui_tests_supported(), "GUI tests require tkinter and a display")
 class GuiImportTests(unittest.TestCase):
     def test_gui_module_imports_app(self):
         from post_change_validation_gui import App
 
         self.assertTrue(callable(App))
 
-    @_SKIP_GUI_DISPLAY
     def test_app_instantiates(self):
         from post_change_validation_gui import App
 
@@ -32,7 +36,6 @@ class GuiImportTests(unittest.TestCase):
 
         self.assertIs(reviewer.App, __import__("post_change_validation_gui", fromlist=["App"]).App)
 
-    @_SKIP_GUI_DISPLAY
     def test_path_inputs_values_are_stringvars(self):
         import tkinter as tk
         from post_change_validation_gui import App
@@ -44,7 +47,6 @@ class GuiImportTests(unittest.TestCase):
         finally:
             app.destroy()
 
-    @_SKIP_GUI_DISPLAY
     def test_run_validation_passes_stripped_port_map_path(self):
         from post_change_validation_gui import App
 

@@ -60,7 +60,10 @@ from src.post_change_validation_uplinks import (
     apply_observed_neighbor_port_overrides,
     infer_trunk_uplink_mappings,
 )
-from post_change_validation_gui import App
+try:
+    from post_change_validation_gui import App
+except ImportError:  # headless Linux CI may lack tkinter
+    App = None  # type: ignore[misc, assignment]
 
 # Compatibility re-exports for tests and downstream callers.
 PortMapRow = shared_models.PortMapRow
