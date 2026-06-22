@@ -1,5 +1,7 @@
 # Post Change Validation Tool
 
+![Tests](https://github.com/wmmunn/post-change-validation-report-public/actions/workflows/tests.yml/badge.svg) [![Known Vulnerabilities](https://snyk.io/test/github/wmmunn/post-change-validation-report-public/badge.svg)](https://snyk.io/test/github/wmmunn/post-change-validation-report-public)
+
 ## Purpose
 
 Post Change Validation Tool is a Python GUI application for reviewing pre-change and post-change Cisco switch-refresh command logs.
@@ -176,13 +178,13 @@ PDF-related tests skip automatically when `reportlab` is not installed.
 
 ## Current Status
 
-Version **1.0.1** â€” initial public release. The engine is modular under `src/` with a single active entry point, sanitized documentation, and a broad unittest suite covering parsers, port mapping, analysis orchestration, and report rendering. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
+Version **1.0.2** â€” initial public release. The engine is modular under `src/` with a single active entry point, sanitized documentation, and a broad unittest suite covering parsers, port mapping, analysis orchestration, and report rendering. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
 
 ## Download Integrity (Windows Standalone EXE)
 
 Published SHA256 for `dist/post_change_validation_reviewer.exe`:
 
-7d3e54e0ae378d73139ef99191ce5ccc5ac983420cbbfaf94e58ec2e2aa4c681
+1721de8056573fcc0af9768e19698858e367e11279f40eef6da28daa31740b27
 
 After download, verify locally (from the directory containing the EXE):
 

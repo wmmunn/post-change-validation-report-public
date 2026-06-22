@@ -2,3 +2,7 @@
 customtkinter>=5.2.0
 # Optional: PDF export (export_pdf)
 reportlab>=4.0.0
+# Transitive via reportlab (pillow>=9.0.0 allows vulnerable 9.x); pin for Snyk/CVE fixes
+pillow>=10.0.1
+# Transitive via reportlab; pin for Snyk / CVE fixes (heap buffer overflow in <10.0.1)
+pillow>=10.0.1

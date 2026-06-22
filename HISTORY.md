@@ -1,6 +1,13 @@
 # Post Change Validation Tool — Changelog
 
 
+## v1.0.2 - Security pin, CI badges, release integrity
+
+- Pin `pillow>=10.0.1` in requirements for security advisories.
+- GitHub Actions CI workflow and README badges (CI, Snyk).
+- Regenerated standalone EXE with updated dependency pin; refreshed SHA256 integrity chain.
+- PDF PoE budget meter and bar layout (carried from v1.0.1).
+
 ## v1.0.1 — PDF PoE budget meter and bar layout
 
 - PDF PoE budget meter aligned with HTML reference rendering.
