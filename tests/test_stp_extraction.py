@@ -2,8 +2,6 @@ import unittest
 from dataclasses import dataclass
 
 from src.post_change_validation_stp import (
-    STP_INFO_VLAN_NOTES,
-    STP_INFO_VLANS,
     STPRootRecord,
     access_ports_in_vlan,
     compare_stp_topology,
@@ -105,16 +103,6 @@ interface Vlan4
         self.assertEqual(1, len(comparison.warn_items))
         self.assertIn("root bridge changed", comparison.warn_items[0])
 
-    def test_compare_stp_topology_allows_private_vlan4_informational_override(self):
-        pre = {"VLAN0004": STPRootRecord("VLAN0004", "32772 0011.2233.4455", 4, "Gi1/0/49")}
-        post = {"VLAN0004": STPRootRecord("VLAN0004", "32772 00aa.bbcc.ddee", 0, "")}
-
-        comparison = compare_stp_topology(pre, post, {}, "", "", "", {}, STP_INFO_VLANS, STP_INFO_VLAN_NOTES)
-
-        self.assertEqual([], comparison.pass_items)
-        self.assertEqual([], comparison.warn_items)
-        self.assertEqual(1, len(comparison.info_items))
-        self.assertIn("classified as security isolation/remediation VLAN", comparison.info_items[0])
 
     def test_compare_stp_topology_keeps_vlan1_shutdown_local_root_informational(self):
         running_config = """

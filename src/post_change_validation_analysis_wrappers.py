@@ -12,8 +12,6 @@ from src.post_change_validation_interface_status import (
 from src.post_change_validation_mac import count_macs, mac_correlation_rows
 from src.post_change_validation_models import Finding, NeighborRecord, PortMapRow, norm_interface
 from src.post_change_validation_stp import (
-    STP_INFO_VLAN_NOTES,
-    STP_INFO_VLANS,
     compare_stp_topology,
     parse_stp_path_cost_method,
     parse_stp_root,
@@ -633,8 +631,6 @@ def analyze_stp_root(
             post_stp_cost_method,
             post.get("show running-config", ""),
             post_if,
-            STP_INFO_VLANS,
-            STP_INFO_VLAN_NOTES,
         )
         if stp_comparison.warn_items:
             findings.append(Finding("WARN", "STP Root", f"{len(stp_comparison.warn_items)} STP root item(s) require review.", "\n".join(stp_comparison.warn_items)))

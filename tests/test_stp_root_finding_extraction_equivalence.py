@@ -5,8 +5,6 @@ from typing import Dict
 from src.post_change_validation_analysis_wrappers import analyze_stp_root
 from src.post_change_validation_models import Finding
 from src.post_change_validation_stp import (
-    STP_INFO_VLAN_NOTES,
-    STP_INFO_VLANS,
     compare_stp_topology,
     parse_stp_path_cost_method,
     parse_stp_root,
@@ -44,8 +42,6 @@ def legacy_analyze_stp_root(
             post_stp_cost_method,
             post.get("show running-config", ""),
             post_if,
-            STP_INFO_VLANS,
-            STP_INFO_VLAN_NOTES,
         )
         if stp_comparison.warn_items:
             findings.append(Finding("WARN", "STP Root", f"{len(stp_comparison.warn_items)} STP root item(s) require review.", "\n".join(stp_comparison.warn_items)))
@@ -106,28 +102,6 @@ class StpRootFindingExtractionEquivalenceTests(unittest.TestCase):
         self.assertEqual(["WARN"], [finding.severity for finding in extracted])
         self.assertIn("expected post=Te1/1/1, actual post=Te1/1/8", extracted[0].detail)
 
-    def test_extracted_analyze_stp_root_matches_legacy_for_info_vlan4_override(self):
-        pre = {
-            "show spanning-tree root": _stp_root_section(
-                "VLAN0004 32772 0011.2233.4455 4 128.1 P2p Root GigabitEthernet1/0/49"
-            ),
-            "show spanning-tree summary": "",
-            "show running-config": "",
-        }
-        post = {
-            "show spanning-tree root": _stp_root_section(
-                "VLAN0004 32772 00AA.BBCC.DDEE 0 0 - local"
-            ),
-            "show spanning-tree summary": "",
-            "show running-config": "",
-        }
-
-        legacy = legacy_analyze_stp_root(pre, post, {}, {})
-        extracted = analyze_stp_root(pre, post, {}, {})
-
-        self.assertEqual(legacy, extracted)
-        self.assertEqual(["INFO"], [finding.severity for finding in extracted])
-        self.assertIn("classified as security isolation/remediation VLAN", extracted[0].detail)
 
     def test_extracted_analyze_stp_root_matches_legacy_for_silent_when_post_stp_empty(self):
         pre = {

@@ -25,10 +25,6 @@ class STPTopologyComparison:
     info_items: list[str]
 
 
-STP_INFO_VLANS = {"VLAN0004"}
-STP_INFO_VLAN_NOTES = {
-    "VLAN0004": "VLAN 4 is classified in this environment as a security isolation/remediation VLAN; root changes are informational unless trunk/forwarding reachability is also broken."
-}
 
 # VLAN0001 32769 0011.2233.4455 4 128.1 P2p Gi1/0/49
 STP_ROOT_ROW_BRIDGE_ID_PATTERN = re.compile(r"[0-9a-fA-F]{4}\.[0-9a-fA-F]{4}\.[0-9a-fA-F]{4}")
