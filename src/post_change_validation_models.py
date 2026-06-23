@@ -106,7 +106,7 @@ _CANONICAL_PREFIX_ALIASES: tuple[tuple[str, str], ...] = (
 def norm_interface(s: str) -> str:
     if not s:
         return ""
-    s = s.strip().replace("Ethernet", "Ethernet")
+    s = s.strip()
     m = INT_RE.search(s)
     if not m:
         m2 = SHORT_INTERFACE_PATTERN.search(s)
