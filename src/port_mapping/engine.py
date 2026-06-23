@@ -7,7 +7,10 @@ from typing import Dict
 
 from src.post_change_validation_models import PortMapRow, canonical_interface_name
 
-from src.port_mapping.private.workplace_profile import WorkplaceProfile
+try:
+    from src.port_mapping.private.workplace_profile import WorkplaceProfile as _RuntimeProfile
+except ImportError:
+    from src.port_mapping.profiles.generic import GenericProfile as _RuntimeProfile
 from src.port_mapping.profile import (
     RuntimeProfileBuilder,
     apply_json_profile,
@@ -29,7 +32,7 @@ class PortMappingEngine:
         runtime_profile_builder: RuntimeProfileBuilder | None = None,
     ) -> None:
         self.profile_root = Path(profile_root) if profile_root else DEFAULT_PROFILE_ROOT
-        self._runtime_profile_builder = runtime_profile_builder or WorkplaceProfile()
+        self._runtime_profile_builder = runtime_profile_builder or _RuntimeProfile()
 
     def build(self, request: PortMapBuildRequest) -> PortMapBuildResult:
         rows: Dict[str, PortMapRow] = {}

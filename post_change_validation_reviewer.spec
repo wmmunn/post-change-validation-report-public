@@ -44,6 +44,8 @@ datas: list[tuple[str, str]] = [
 datas.extend(_json_datas(PROFILE_PUBLIC, "src/port_mapping/profiles/public"))
 datas.extend(_json_datas(PROFILE_TEMPLATES, "src/port_mapping/profiles/templates"))
 
+_private_profile_path = PROJECT_ROOT / "src" / "port_mapping" / "private" / "workplace_profile.py"
+
 hiddenimports = [
     # CustomTkinter widget/theme submodules (dynamic imports in CTk).
     "customtkinter",
@@ -79,7 +81,9 @@ hiddenimports = [
     "reportlab.pdfbase._fontdata",
     "reportlab.rl_config",
     # Runtime port-map builder referenced by engine (Python module, not JSON).
-    "src.port_mapping.private.workplace_profile",
+    *(
+        ["src.port_mapping.private.workplace_profile"] if _private_profile_path.exists() else ["src.port_mapping.profiles.generic"]
+    ),
 ]
 
 excludes = [
