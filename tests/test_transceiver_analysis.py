@@ -3,6 +3,7 @@ import tempfile
 from pathlib import Path
 
 import post_change_validation_reviewer as reviewer
+from src.post_change_validation_analysis_wrappers import analyze_inventory
 
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures"
 
@@ -46,6 +47,7 @@ class CommandSectionParsingTests(unittest.TestCase):
         cases = {
             "ACCESS-SW01#show int status": "show interfaces status",
             "#sho inventory": "show inventory",
+            "eorwdw-wccadm-pbx-5-sw#sho inv": "show inventory",
             ">show interfaces TenGigabitEthernet1/1/1 transceiver detail": "show interfaces transceiver detail",
         }
 
@@ -64,12 +66,31 @@ class CommandSectionParsingTests(unittest.TestCase):
                 "show interfaces status",
                 "show interfaces transceiver detail",
                 "show inventory",
+                "show running-config",
                 "show version",
             ],
         )
         self.assertIn("Gi1/0/1", sections["show interfaces status"])
         self.assertIn("SANITIZED1234", sections["show inventory"])
         self.assertIn("Te1/1/1", sections["show interfaces transceiver detail"])
+
+    def test_splits_sanitized_sho_inv_inventory_fixture(self):
+        text = (FIXTURE_ROOT / "sanitized_sho_inv_inventory.log").read_text(encoding="utf-8")
+
+        sections = reviewer.split_sections(text)
+        inventory = sections.get("show inventory", "")
+
+        self.assertIn("show inventory", sections)
+        self.assertIn("SANITIZED1234", inventory)
+        self.assertIn("C9300-48U", inventory)
+
+        findings = analyze_inventory(inventory)
+
+        self.assertEqual(1, len(findings))
+        self.assertEqual("Inventory", findings[0].category)
+        self.assertIn("Inventory parsed:", findings[0].finding)
+        self.assertTrue(findings[0].detail.startswith("component|description|pid|"))
+        self.assertIn("Switch 1|C9300-48U|C9300-48U|V09|SANITIZED1234", findings[0].detail)
 
     def test_cdp_wrapped_device_id_with_digits_is_preserved(self):
         section = """
@@ -90,6 +111,11 @@ router-1.net.example
 SW1#show version
 Cisco IOS XE Software, Version 17.09.04
 
+SW1#show running-config
+!
+hostname cisco-access-sw01
+!
+
 SW1#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
                  Gig 1/0/25       120             R S I   C9500     Twe 1/0/22
@@ -97,6 +123,11 @@ Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
         post_text = """
 SW2#show version
 Cisco IOS XE Software, Version 17.09.04
+
+SW2#show running-config
+!
+hostname cisco-access-sw02
+!
 
 SW2#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
@@ -123,6 +154,11 @@ router-1.net.example  Ten 1/1/1   120             R S I   C9500     Twe 1/0/22
 SW1#show version
 Cisco IOS XE Software, Version 17.09.04
 
+SW1#show running-config
+!
+hostname cisco-access-sw01
+!
+
 SW1#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
 router-1.net.location.com
@@ -133,6 +169,11 @@ router-0.net.location.com
         post_text = """
 SW2#show version
 Cisco IOS XE Software, Version 17.09.04
+
+SW2#show running-config
+!
+hostname cisco-access-sw02
+!
 
 SW2#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID

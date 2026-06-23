@@ -11,6 +11,11 @@ class PoeNeighborInteractionTests(unittest.TestCase):
 SW1#show version
 Cisco IOS XE Software, Version 17.09.04
 
+SW1#show running-config
+!
+hostname cisco-access-sw01
+!
+
 SW1#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
 phone-1.example  Gig 1/0/3        120        H           PHONE     Gig 0/1
@@ -22,6 +27,11 @@ Gi1/0/3 auto on 6.3 IP Phone 3 30.0
         post_text = """
 SW2#show version
 Cisco IOS XE Software, Version 17.09.04
+
+SW2#show running-config
+!
+hostname cisco-access-sw02
+!
 
 SW2#show cdp neighbors
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID

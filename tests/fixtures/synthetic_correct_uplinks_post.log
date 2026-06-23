@@ -26,6 +26,8 @@ Te2/1/8     1-4094
 ACCESS-SW02#show running-config
 version 17.9
 !
+hostname cisco-access-sw02
+!
 switch 1 provision c9300-24ux
 switch 2 provision c9300-48u
 !

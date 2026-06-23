@@ -26,6 +26,8 @@ Gi2/0/52    1-4094
 ACCESS-SW01#show running-config
 version 17.9
 !
+hostname cisco-access-sw01
+!
 switch 1 provision c9300-24ux
 switch 2 provision c9300-48u
 !

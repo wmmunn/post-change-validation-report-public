@@ -1,6 +1,13 @@
 # Post Change Validation Tool — Changelog
 
 
+## v1.0.3 - Running-config Cisco gate and inventory alias
+
+- Log acceptance gate now checks parsed `show running-config` for the word `cisco` (case-insensitive) instead of strict `show version` IOS/IOS-XE banner signatures.
+- Added `show inv` command-section alias mapping to `show inventory` for abbreviated Cisco IOS captures.
+- Regenerated standalone Windows EXE; refreshed SHA256 integrity chain in README and `dist/post_change_validation_reviewer.exe.sha256`.
+
+
 ## v1.0.2 - Security pin, CI badges, release integrity
 
 - Pin `pillow>=10.0.1` in requirements for security advisories.

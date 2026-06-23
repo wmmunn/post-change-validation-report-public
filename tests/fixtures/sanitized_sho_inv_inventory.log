@@ -1,0 +1,15 @@
+ACCESS-SW01#show version
+Cisco IOS XE Software, Version 17.09.04
+
+eorwdw-wccadm-pbx-5-sw#sho inv
+NAME: "c93xx Stack", DESCR: "c93xx Stack"
+PID: C9300-48U         , VID: V09  , SN: SANITIZEDSTACK
+
+NAME: "Switch 1", DESCR: "C9300-48U"
+PID: C9300-48U         , VID: V09  , SN: SANITIZED1234
+
+NAME: "Switch 1 - Power Supply A", DESCR: "Switch 1 - Power Supply A"
+PID: PWR-C1-1100WAC-P  , VID: V02  , SN: SANITIZEDPSA
+
+NAME: "Te1/1/1", DESCR: "SFP-10GBase-LR"
+PID: SFP-10G-LR-S        , VID: V01  , SN: SANITIZEDSFP

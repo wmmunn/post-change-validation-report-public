@@ -4,9 +4,9 @@ This document describes the default network-validation assumptions baked into th
 
 ## Supported Platforms and Logs
 
-The tool is intentionally scoped to **Cisco IOS and IOS-XE** switch command logs. Before parsing, it requires a recognizable IOS or IOS-XE software line in `show version`.
+The tool is intentionally scoped to **Cisco IOS and IOS-XE** switch command logs. Before parsing, it requires a non-empty `show running-config` section that contains the word `cisco` (case-insensitive).
 
-**Out of scope:** NX-OS (Nexus), IOS-XR, ASA, and other Cisco OS families. Their CLI output, interface syntax, and command shapes differ enough that auto-parsers and port-map inference would be unreliable. Unsupported logs are hard-stopped at file selection and again before analysis.
+**Out of scope:** Logs missing `show running-config`, or configs without the word `cisco`. Parsers and port-map inference target IOS/IOS-XE CLI shapes; unsupported logs are hard-stopped at file selection and again before analysis.
 
 Review these assumptions before relying on auto-detected port maps or default uplink inference during a change window.
 

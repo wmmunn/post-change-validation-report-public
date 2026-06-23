@@ -58,11 +58,13 @@ class GuiImportTests(unittest.TestCase):
                 post = root / "post.txt"
                 port_map = root / "port_map.csv"
                 pre.write_text(
-                    "ACCESS-SW01#show version\nCisco IOS XE Software, Version 17.09.04\n",
+                    "ACCESS-SW01#show version\nCisco IOS XE Software, Version 17.09.04\n"
+                    "ACCESS-SW01#show running-config\nhostname cisco-access-sw01\n",
                     encoding="utf-8",
                 )
                 post.write_text(
-                    "ACCESS-SW02#show version\nCisco IOS XE Software, Version 17.09.04\n",
+                    "ACCESS-SW02#show version\nCisco IOS XE Software, Version 17.09.04\n"
+                    "ACCESS-SW02#show running-config\nhostname cisco-access-sw01\n",
                     encoding="utf-8",
                 )
                 port_map.write_text("old_port,new_port,role,note\n", encoding="utf-8")
@@ -83,11 +85,13 @@ class GuiImportTests(unittest.TestCase):
                     app.run_validation()
 
                 self.assertEqual(
-                    "ACCESS-SW01#show version\nCisco IOS XE Software, Version 17.09.04\n",
+                    "ACCESS-SW01#show version\nCisco IOS XE Software, Version 17.09.04\n"
+                    "ACCESS-SW01#show running-config\nhostname cisco-access-sw01\n",
                     captured["pre_text"],
                 )
                 self.assertEqual(
-                    "ACCESS-SW02#show version\nCisco IOS XE Software, Version 17.09.04\n",
+                    "ACCESS-SW02#show version\nCisco IOS XE Software, Version 17.09.04\n"
+                    "ACCESS-SW02#show running-config\nhostname cisco-access-sw01\n",
                     captured["post_text"],
                 )
                 self.assertEqual(str(port_map), captured["port_map_path"])

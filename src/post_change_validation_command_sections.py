@@ -29,6 +29,7 @@ COMMAND_ALIASES = {
     "show version": "show version",
     "show processes cpu": "show processes cpu",
     "show inventory": "show inventory",
+    "show inv": "show inventory",
     "show int transceiver detail": "show interfaces transceiver detail",
     "show interface transceiver detail": "show interfaces transceiver detail",
     "show interfaces transceiver detail": "show interfaces transceiver detail",
@@ -42,6 +43,7 @@ COMMAND_PIPE_SUFFIX_PATTERN = re.compile(r"\s*\|.*$")
 # ACCESS-SW01#show int status
 PROMPT_PREFIX_PATTERN = re.compile(r"^(?:[\w.()/: -]+)?[#>]\s*")
 # sho inventory
+# eorwdw-wccadm-pbx-5-sw#sho inv
 SHOW_ABBREVIATION_PATTERN = re.compile(r"^(?:sho|sh)\s+")
 # show interfaces TenGigabitEthernet1/1/1 transceiver detail
 INTERFACE_TRANSCEIVER_DETAIL_PATTERN = re.compile(

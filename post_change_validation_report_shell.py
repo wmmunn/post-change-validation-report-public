@@ -20,7 +20,7 @@ from src.post_change_validation_transceiver_rendering import build_transceiver_h
 
 
 APP_NAME = "Post-Change Validation Reviewer"
-APP_VERSION = "1.0.2"
+APP_VERSION = "1.0.3"
 
 TOP_CARD_CATEGORIES = {
     "Access Port MAC Correlation",

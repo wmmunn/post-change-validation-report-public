@@ -12,3 +12,8 @@ PID: C9300-48U          , VID: V01  , SN: SANITIZED1234
 >show interfaces TenGigabitEthernet1/1/1 transceiver detail
 Te1/1/1 25.20 89.00 85.00 -5.00 -9.00
 
+ACCESS-SW01#show running-config
+version 17.9
+!
+hostname cisco-access-sw01
+!

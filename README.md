@@ -17,9 +17,9 @@ An example of the report it produces can be found [here](https://github.com/wmmu
 
 ## Supported Log Scope
 
-This tool accepts **Cisco IOS and IOS-XE** command-output logs only. At file selection and before analysis, the reviewer checks the `show version` section for an IOS or IOS-XE software signature (for example `Cisco IOS XE Software, Version 17.09.04`).
+This tool accepts **Cisco IOS and IOS-XE** command-output logs only. At file selection and before analysis, the reviewer checks the `show running-config` section for the word `cisco` (case-insensitive).
 
-**Not supported:** NX-OS, IOS-XR, and other Cisco OS families. Parsers and refresh assumptions in this tool target IOS/IOS-XE CLI formatting, interface naming, and command output shapes. Logs from other platforms are rejected with a blocking message rather than producing misleading findings.
+**Not supported:** Logs without a recognizable `show running-config` block, or configs that do not contain the word `cisco`. Parsers and refresh assumptions in this tool target IOS/IOS-XE CLI formatting, interface naming, and command output shapes. Logs that fail this gate are rejected with a blocking message rather than producing misleading findings.
 
 **Layer 2 access switches only.** The tool is designed exclusively for 
 Catalyst access switches operating as Layer 2 devices. It does not validate 
@@ -198,13 +198,13 @@ PDF-related tests skip automatically when `reportlab` is not installed.
 
 ## Current Status
 
-Version **1.0.2** â€” initial public release. The engine is modular under `src/` with a single active entry point, sanitized documentation, and a broad unittest suite covering parsers, port mapping, analysis orchestration, and report rendering. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
+Version **1.0.3** — Cisco running-config log gate and `show inv` inventory alias; 273 automated tests. See [Development & Testing History](docs/development-and-testing-history.md) for pre-release validation background.
 
 ## Download Integrity (Windows Standalone EXE)
 
 Published SHA256 for `dist/post_change_validation_reviewer.exe`:
 
-1721de8056573fcc0af9768e19698858e367e11279f40eef6da28daa31740b27
+38fc7af2dfeb011628161f51b498228e17c13eafe1dcb41cff7a9c23c13a97ba
 
 After download, verify locally (from the directory containing the EXE):
 

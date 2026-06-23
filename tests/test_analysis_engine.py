@@ -44,7 +44,7 @@ class AnalysisEngineTests(unittest.TestCase):
             AnalysisEngine().execute("not-a-valid-log", "not-a-valid-log")
 
         self.assertIn("Pre-change log", str(ctx.exception))
-        self.assertIn("Missing or empty show version", str(ctx.exception))
+        self.assertIn("Missing or empty show running-config", str(ctx.exception))
 
     def test_execute_loads_manual_csv_fixture(self):
         map_path = str(FIXTURE_ROOT / "synthetic_correct_uplinks_port_map.csv")
